@@ -93,24 +93,27 @@ public class ProcessEngineConfiguration {
   TransactionContextFactory transactionContextFactory;
 
   public ProcessEngineConfiguration() {
-    commandExecutor = createDefaultCmdExecutor();
+
+    commandContextFactory = createDefaultCommandContextFactory();
+    commandExecutor = createDefaultCmdExecutor(commandContextFactory);
+
     deployerManager = createDefaultDeployerManager();
     variableTypes = createDefaultVariableTypes();
     scriptingEngines = createDefaultScriptingEngines();
     dbSchemaStrategy = createDefaultDbSchemaStrategy();
     jobExecutorAutoActivate = createDefaultJobExecutorAutoActivate();
-    processCache = createDefaultProcessCache(deployerManager);
-    jobExecutor = createDefaultJobExecutor(commandExecutor);
-    idGenerator = createDefaultIdGenerator(commandExecutor);
-    processService = createDefaultProcessService(commandExecutor);
-    identityService = createDefaultIdentityService(commandExecutor);
-    taskService = createDefaultTaskService(commandExecutor);
-    managementService = createDefaultManagementService(commandExecutor);
     expressionManager = createDefaultExpressionManager();
     jobHandlers = createDefaultJobHandlers();
     businessCalendarManager = createDefaultBusinessCalendarManager();
 
-    commandContextFactory = createDefaultCommandContextFactory();
+    processCache = createDefaultProcessCache(deployerManager);
+    jobExecutor = createDefaultJobExecutor(commandExecutor);
+    idGenerator = createDefaultIdGenerator(commandExecutor);
+
+    processService = createDefaultProcessService(commandExecutor);
+    identityService = createDefaultIdentityService(commandExecutor);
+    taskService = createDefaultTaskService(commandExecutor);
+    managementService = createDefaultManagementService(commandExecutor);
 
     persistenceSessionFactory = createDefaultPersistenceSessionFactory(idGenerator);
     messageSessionFactory = createDefaultMessageSessionFactory();
@@ -189,8 +192,8 @@ public class ProcessEngineConfiguration {
     return new IbatisPersistenceSessionFactory(idGenerator, "h2", "org.h2.Driver", "jdbc:h2:mem:activiti", "sa", "");
   }
 
-  protected CommandExecutor createDefaultCmdExecutor() {
-    InterceptorChainBuilder builder = new InterceptorChainBuilder().addInterceptor(new CommandContextInterceptor(this)).addInterceptor(
+  protected CommandExecutor createDefaultCmdExecutor(CommandContextFactory commandContextFactory) {
+    InterceptorChainBuilder builder = new InterceptorChainBuilder().addInterceptor(new CommandContextInterceptor(commandContextFactory)).addInterceptor(
             new CommandExecutorImpl());
     CommandExecutor commandExecutor = builder.getFirst();
     return commandExecutor;
@@ -240,14 +243,6 @@ public class ProcessEngineConfiguration {
 
   public void setProcessCache(ProcessCache processCache) {
     this.processCache = processCache;
-  }
-
-  public IdGenerator getDbidGenerator() {
-    return idGenerator;
-  }
-
-  public void setDbidGenerator(IdGenerator idGenerator) {
-    this.idGenerator = idGenerator;
   }
 
   public VariableTypes getTypes() {
@@ -376,18 +371,6 @@ public class ProcessEngineConfiguration {
 
   public CommandExecutor getCommandExecutor() {
     return commandExecutor;
-  }
-
-  public void setCommandExecutor(CommandExecutor commandExecutor) {
-    this.commandExecutor = commandExecutor;
-  }
-
-  public JobHandlers getJobCommands() {
-    return jobHandlers;
-  }
-
-  public void setJobCommands(JobHandlers jobHandlers) {
-    this.jobHandlers = jobHandlers;
   }
 
   public MessageSessionFactory getMessageSessionFactory() {

@@ -15,44 +15,41 @@ package org.activiti.impl.interceptor;
 import java.util.logging.Logger;
 
 import org.activiti.ActivitiException;
-import org.activiti.impl.cfg.ProcessEngineConfiguration;
-
-
 
 /**
  * @author Tom Baeyens
  */
 public class CommandContextInterceptor extends Interceptor {
-  
-  private static Logger log = Logger.getLogger(CommandContextInterceptor.class.getName());
-  
-  private final ProcessEngineConfiguration processEngineConfiguration;
 
-  public CommandContextInterceptor(ProcessEngineConfiguration processEngineConfiguration) {
-    this.processEngineConfiguration = processEngineConfiguration;
+  private static Logger log = Logger.getLogger(CommandContextInterceptor.class.getName());
+
+  private final CommandContextFactory commandContextFactory;
+
+  public CommandContextInterceptor(CommandContextFactory commandContextFactory) {
+    this.commandContextFactory = commandContextFactory;
   }
 
   public <T> T execute(Command<T> command) {
     log.fine("");
-    log.fine("=== starting command "+command+" ===========================================");
-    CommandContext commandContext = processEngineConfiguration.getCommandContextFactory().createCommandContext(command);
+    log.fine("=== starting command " + command + " ===========================================");
+    CommandContext commandContext = commandContextFactory.createCommandContext(command);
     try {
       T result = next.execute(command);
       return result;
-      
+
     } catch (Throwable exception) {
       commandContext.exception(exception);
-      
+
       if (exception instanceof RuntimeException) {
         throw (RuntimeException) exception;
       } else if (exception instanceof Error) {
         throw (Error) exception;
       }
       throw new ActivitiException(exception.getMessage(), exception);
-      
+
     } finally {
-      commandContext.close();        
-      log.fine("=== command "+command+" finished ===========================================");
+      commandContext.close();
+      log.fine("=== command " + command + " finished ===========================================");
       log.fine("");
     }
   }

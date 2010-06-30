@@ -30,52 +30,68 @@ import org.springframework.util.Assert;
  */
 public class ProcessEngineFactoryBean implements FactoryBean {
 
-  private ProcessEngineConfiguration configuration = new ProcessEngineConfiguration();
-  private String databaseName;
-  private DataSource dataSource;
-  private PlatformTransactionManager transactionManager;
+	private String databaseName;
+	private DataSource dataSource;
+	private PlatformTransactionManager transactionManager;
+	private DbSchemaStrategy dbSchemaStrategy;
+	private boolean jobExecutorAutoActivate;
+	private String processEngineName;
 
-  public Object getObject() throws Exception {
-    Assert.state(databaseName != null, "A database name must be provided (e.g. 'h2')");
-    IdGenerator idGenerator = configuration.getIdGenerator();
-    PersistenceSessionFactory persistenceSessionFactory = new IbatisPersistenceSessionFactory(idGenerator, databaseName, dataSource, transactionManager == null);
-    configuration.setPersistenceSessionFactory(persistenceSessionFactory);
-    if (transactionManager != null) {
-      // configuration.setTransactionContextFactory(new SpringTransactionContextFactory(transactionManager));
-    }
-    return configuration.buildProcessEngine();
-  }
+	public Object getObject() throws Exception {
 
-  public Class< ? > getObjectType() {
-    return ProcessEngine.class;
-  }
+		Assert.state(databaseName != null,
+				"A database name must be provided (e.g. 'h2')");
 
-  public boolean isSingleton() {
-    return true;
-  }
+		ProcessEngineConfiguration configuration = new ProcessEngineConfiguration();
+		configuration.setDbSchemaStrategy(dbSchemaStrategy);
+		configuration.setJobExecutorAutoActivate(jobExecutorAutoActivate);
+		configuration.setProcessEngineName(processEngineName);
+		IdGenerator idGenerator = configuration.getIdGenerator();
+		PersistenceSessionFactory persistenceSessionFactory = new IbatisPersistenceSessionFactory(
+				idGenerator, databaseName, dataSource,
+				transactionManager == null);
+		configuration.setPersistenceSessionFactory(persistenceSessionFactory);
 
-  public void setDatabaseName(String databaseName) {
-    this.databaseName = databaseName;
-  }
+		if (transactionManager != null) {
+			// configuration.setTransactionContextFactory(new
+			// SpringTransactionContextFactory(transactionManager));
+		}
 
-  public void setDataSource(DataSource dataSource) {
-    this.dataSource = dataSource;
-  }
+		return configuration.buildProcessEngine();
 
-  public void setDbSchemaStrategy(DbSchemaStrategy dbSchemaStrategy) {
-    configuration.setDbSchemaStrategy(dbSchemaStrategy);
-  }
+	}
 
-  public void setJobExecutorAutoActivation(boolean jobExecutorAutoActivate) {
-    configuration.setJobExecutorAutoActivate(jobExecutorAutoActivate);
-  }
+	public Class<?> getObjectType() {
+		return ProcessEngine.class;
+	}
 
-  public void setProcessEngineName(String processEngineName) {
-    configuration.setProcessEngineName(processEngineName);
-  }
+	public boolean isSingleton() {
+		return true;
+	}
 
-  public void setTransactionManager(PlatformTransactionManager transactionManager) {
-    this.transactionManager = transactionManager;
-  }
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public void setDbSchemaStrategy(DbSchemaStrategy dbSchemaStrategy) {
+		this.dbSchemaStrategy = dbSchemaStrategy;
+	}
+
+	public void setJobExecutorAutoActivation(boolean jobExecutorAutoActivate) {
+		this.jobExecutorAutoActivate = jobExecutorAutoActivate;
+	}
+
+	public void setProcessEngineName(String processEngineName) {
+		this.processEngineName = processEngineName;
+	}
+
+	public void setTransactionManager(
+			PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
 
 }

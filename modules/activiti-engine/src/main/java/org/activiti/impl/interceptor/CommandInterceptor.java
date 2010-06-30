@@ -19,6 +19,6 @@ package org.activiti.impl.interceptor;
  */
 public interface CommandInterceptor {
 
-  <T> T invoke(CommandExecutor next, CommandContext context);
+  <T> T invoke(CommandExecutor next, Command<T> command, CommandContext context);
   
 }

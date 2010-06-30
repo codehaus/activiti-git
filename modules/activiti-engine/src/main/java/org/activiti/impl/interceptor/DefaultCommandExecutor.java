@@ -23,18 +23,18 @@ import org.activiti.ActivitiException;
 /**
  * @author Dave Syer
  */
-public class CommandInterceptorChain implements CommandExecutor {
+public class DefaultCommandExecutor implements CommandExecutor {
 
-  private static Logger log = Logger.getLogger(CommandInterceptorChain.class.getName());
+  private static Logger log = Logger.getLogger(DefaultCommandExecutor.class.getName());
   private final List<CommandInterceptor> chain = new ArrayList<CommandInterceptor>();
   
   private final CommandContextFactory commandContextFactory;
   
-  public CommandInterceptorChain(CommandContextFactory commandContextFactory) {
+  public DefaultCommandExecutor(CommandContextFactory commandContextFactory) {
     this.commandContextFactory = commandContextFactory;
   }
   
-  public CommandInterceptorChain appendInterceptor(CommandInterceptor interceptor) {
+  public DefaultCommandExecutor appendInterceptor(CommandInterceptor interceptor) {
     chain.add(interceptor);
     return this;
   }
@@ -75,7 +75,7 @@ public class CommandInterceptorChain implements CommandExecutor {
 
     public <T> T execute(Command<T> command) {
       if (chain.hasNext()) {
-        return chain.next().invoke(this, context);
+        return chain.next().invoke(this, command, context);
       }
       return  command.execute(context);
     }

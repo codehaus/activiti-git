@@ -30,10 +30,8 @@ import org.activiti.impl.db.IdGenerator;
 import org.activiti.impl.el.ExpressionManager;
 import org.activiti.impl.identity.IdentitySession;
 import org.activiti.impl.interceptor.CommandContextFactory;
-import org.activiti.impl.interceptor.CommandContextInterceptor;
 import org.activiti.impl.interceptor.CommandExecutor;
-import org.activiti.impl.interceptor.CommandExecutorImpl;
-import org.activiti.impl.interceptor.InterceptorChainBuilder;
+import org.activiti.impl.interceptor.CommandInterceptorChain;
 import org.activiti.impl.job.JobHandlers;
 import org.activiti.impl.job.TimerExecuteNestedActivityJobHandler;
 import org.activiti.impl.jobexecutor.JobExecutor;
@@ -193,9 +191,7 @@ public class ProcessEngineConfiguration {
   }
 
   protected CommandExecutor createDefaultCmdExecutor(CommandContextFactory commandContextFactory) {
-    InterceptorChainBuilder builder = new InterceptorChainBuilder().addInterceptor(new CommandContextInterceptor(commandContextFactory)).addInterceptor(
-            new CommandExecutorImpl());
-    CommandExecutor commandExecutor = builder.getFirst();
+    CommandInterceptorChain commandExecutor = new CommandInterceptorChain(commandContextFactory);
     return commandExecutor;
   }
 

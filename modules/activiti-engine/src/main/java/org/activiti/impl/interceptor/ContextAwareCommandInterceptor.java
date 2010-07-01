@@ -17,8 +17,8 @@ package org.activiti.impl.interceptor;
 /**
  * @author Dave Syer
  */
-public interface CommandInterceptor {
+public interface ContextAwareCommandInterceptor {
 
-  <T> T invoke(CommandExecutor next, Command<T> command);
+  <T> T invoke(CommandExecutor next, Command<T> command, CommandContext context);
   
 }

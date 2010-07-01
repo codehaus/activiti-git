@@ -99,7 +99,7 @@ public class ProcessEngineConfiguration {
 
 		this.commandContextFactory = commandContextFactory == null ? createDefaultCommandContextFactory()
 				: commandContextFactory;
-		commandExecutor = createDefaultCmdExecutor(commandContextFactory);
+		commandExecutor = createDefaultCmdExecutor(this.commandContextFactory);
 
 		deployerManager = createDefaultDeployerManager();
 		variableTypes = createDefaultVariableTypes();

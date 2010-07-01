@@ -13,12 +13,12 @@
 package org.activiti.impl.interceptor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.activiti.ActivitiException;
-
 
 /**
  * @author Dave Syer
@@ -26,60 +26,109 @@ import org.activiti.ActivitiException;
 public class DefaultCommandExecutor implements CommandExecutor {
 
   private static Logger log = Logger.getLogger(DefaultCommandExecutor.class.getName());
-  private final List<CommandInterceptor> chain = new ArrayList<CommandInterceptor>();
-  
+  private final List<ContextAwareCommandInterceptor> contextAwareInterceptors = new ArrayList<ContextAwareCommandInterceptor>();
+
+  private final List<CommandInterceptor> interceptors = new ArrayList<CommandInterceptor>();
+
   private final CommandContextFactory commandContextFactory;
-  
+
   public DefaultCommandExecutor(CommandContextFactory commandContextFactory) {
     this.commandContextFactory = commandContextFactory;
   }
-  
-  public DefaultCommandExecutor appendInterceptor(CommandInterceptor interceptor) {
-    chain.add(interceptor);
+
+  public DefaultCommandExecutor addContextAwareCommandInterceptor(ContextAwareCommandInterceptor interceptor) {
+    contextAwareInterceptors.add(interceptor);
     return this;
   }
-  
+
+  public DefaultCommandExecutor addCommandInterceptor(CommandInterceptor interceptor) {
+    interceptors.add(interceptor);
+    return this;
+  }
+
   public <T> T execute(Command<T> command) {
     log.fine("");
     log.fine("=== starting command " + command + " ===========================================");
-    CommandContext commandContext = commandContextFactory.createCommandContext(command);
     try {
-      return new InternalChain(chain, commandContext).execute(command);
+
+      return new InternalCommandInterceptorChain(interceptors, contextAwareInterceptors, commandContextFactory).execute(command);
 
     } catch (Throwable exception) {
-      commandContext.exception(exception);
 
       if (exception instanceof RuntimeException) {
         throw (RuntimeException) exception;
       } else if (exception instanceof Error) {
         throw (Error) exception;
       }
-      throw new ActivitiException(exception.getMessage(), exception);
+      throw new ActivitiException("Command failed with unknown exception.", exception);
 
     } finally {
-      commandContext.close();
       log.fine("=== command " + command + " finished ===========================================");
       log.fine("");
     }
   }
-  
-  private static class InternalChain implements CommandExecutor {
-    
-    private final Iterator<CommandInterceptor> chain;
-    private final CommandContext context;
 
-    public InternalChain(List<CommandInterceptor> chain, CommandContext context) {
-      this.context = context;
-      this.chain = chain.iterator();
+  private static class InternalCommandInterceptorChain implements CommandExecutor {
+
+    private final Iterator<ContextAwareCommandInterceptor> contextAwareInterceptors;
+    private final Iterator<CommandInterceptor> interceptors;
+    private final InternalCommandContextCreator contextCreator;
+
+    public InternalCommandInterceptorChain(List<CommandInterceptor> interceptors, List<ContextAwareCommandInterceptor> contextAwareInterceptors,
+            CommandContextFactory commandContextFactory) {
+
+      ArrayList<CommandInterceptor> unawares = new ArrayList<CommandInterceptor>(interceptors);
+      contextCreator = new InternalCommandContextCreator(commandContextFactory);
+      unawares.add(contextCreator);
+
+      this.interceptors = unawares.iterator();
+      this.contextAwareInterceptors = Collections.unmodifiableList(contextAwareInterceptors).iterator();
+
     }
 
     public <T> T execute(Command<T> command) {
-      if (chain.hasNext()) {
-        return chain.next().invoke(this, command, context);
+
+      if (interceptors.hasNext()) {
+        return interceptors.next().invoke(this, command);
       }
-      return  command.execute(context);
+
+      if (contextAwareInterceptors.hasNext()) {
+        return contextAwareInterceptors.next().invoke(this, command, contextCreator.getCommmandContext());
+      }
+
+      return command.execute(contextCreator.getCommmandContext());
+
     }
-    
+
+  }
+
+  private static class InternalCommandContextCreator implements CommandInterceptor {
+
+    private final CommandContextFactory commandContextFactory;
+    private CommandContext context;
+
+    public InternalCommandContextCreator(CommandContextFactory commandContextFactory) {
+      this.commandContextFactory = commandContextFactory;
+    }
+
+    public CommandContext getCommmandContext() {
+      return context;
+    }
+
+    public <T> T invoke(CommandExecutor next, Command<T> command) {
+
+      context = commandContextFactory.createCommandContext(command);
+
+      try {
+        return next.execute(command);
+      } catch (Exception e) {
+        context.exception(e);
+      } finally {
+        context.close();
+      }
+      return null;
+    }
+
   }
 
 }

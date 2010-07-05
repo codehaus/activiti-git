@@ -13,6 +13,7 @@
 package org.activiti.impl.bpmn.parser;
 
 import org.activiti.impl.el.ExpressionManager;
+import org.activiti.impl.scripting.ScriptingEngines;
 import org.activiti.impl.xml.Parser;
 
 
@@ -44,9 +45,12 @@ public class BpmnParser extends Parser {
   public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
 
   private final ExpressionManager expressionManager;
+
+  private final ScriptingEngines scriptingEngines;
   
-  public BpmnParser(ExpressionManager expressionManager) {
+  public BpmnParser(ExpressionManager expressionManager, ScriptingEngines scriptingEngines) {
     this.expressionManager = expressionManager;
+    this.scriptingEngines = scriptingEngines;
   }
   
   /**
@@ -54,7 +58,7 @@ public class BpmnParser extends Parser {
    * to parse only one BPMN 2.0 process definition.
    */
   public BpmnParse createParse() {
-    return new BpmnParse(this, expressionManager);
+    return new BpmnParse(this, expressionManager, scriptingEngines);
   }
   
 }

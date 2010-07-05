@@ -57,8 +57,6 @@ import org.activiti.impl.variable.ShortType;
 import org.activiti.impl.variable.StringType;
 import org.activiti.impl.variable.VariableTypes;
 
-import com.sun.script.juel.JuelScriptEngineFactory;
-
 /**
  * @author Tom Baeyens
  */
@@ -99,9 +97,9 @@ public class ProcessEngineConfiguration {
     commandExecutor = createDefaultCmdExecutor(this.commandContextFactory);
 
     expressionManager = createDefaultExpressionManager();
-    deployerManager = createDefaultDeployerManager(expressionManager);
-    variableTypes = createDefaultVariableTypes();
     scriptingEngines = createDefaultScriptingEngines();
+    deployerManager = createDefaultDeployerManager(expressionManager, scriptingEngines);
+    variableTypes = createDefaultVariableTypes();
     dbSchemaStrategy = createDefaultDbSchemaStrategy();
     jobExecutorAutoActivate = createDefaultJobExecutorAutoActivate();
     jobHandlers = createDefaultJobHandlers();
@@ -200,7 +198,7 @@ public class ProcessEngineConfiguration {
   }
 
   protected ScriptingEngines createDefaultScriptingEngines() {
-    return new ScriptingEngines().addScriptEngineFactory(new JuelScriptEngineFactory());
+    return new ScriptingEngines();
   }
 
   protected VariableTypes createDefaultVariableTypes() {
@@ -213,8 +211,8 @@ public class ProcessEngineConfiguration {
     return idGenerator;
   }
 
-  protected DeployerManager createDefaultDeployerManager(ExpressionManager expressionManager) {
-    return new DeployerManager().addDeployer(new BpmnDeployer(expressionManager));
+  protected DeployerManager createDefaultDeployerManager(ExpressionManager expressionManager, ScriptingEngines scriptingEngines) {
+    return new DeployerManager().addDeployer(new BpmnDeployer(expressionManager, scriptingEngines));
   }
 
   protected ExpressionManager createDefaultExpressionManager() {

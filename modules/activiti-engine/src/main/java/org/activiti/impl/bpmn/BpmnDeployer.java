@@ -26,6 +26,7 @@ import org.activiti.impl.interceptor.CommandContext;
 import org.activiti.impl.persistence.PersistenceSession;
 import org.activiti.impl.repository.Deployer;
 import org.activiti.impl.repository.DeploymentImpl;
+import org.activiti.impl.scripting.ScriptingEngines;
 
 /**
  * @author Tom Baeyens
@@ -38,8 +39,11 @@ public class BpmnDeployer implements Deployer {
 
   private final ExpressionManager expressionManager;
 
-  public BpmnDeployer(ExpressionManager expressionManager) {
+  private final ScriptingEngines scriptingEngines;
+
+  public BpmnDeployer(ExpressionManager expressionManager, ScriptingEngines scriptingEngines) {
     this.expressionManager = expressionManager;
+    this.scriptingEngines = scriptingEngines;
   }
 
   public void deploy(DeploymentImpl deployment, CommandContext commandContext) {
@@ -53,7 +57,7 @@ public class BpmnDeployer implements Deployer {
         ByteArrayImpl resource = resources.get(resourceName);
         byte[] bytes = resource.getBytes();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        BpmnParse bpmnParse = new BpmnParser(expressionManager).createParse().processDefinitionClass(ProcessDefinitionDbImpl.class).commandContext(
+        BpmnParse bpmnParse = new BpmnParser(expressionManager, scriptingEngines).createParse().processDefinitionClass(ProcessDefinitionDbImpl.class).commandContext(
                 commandContext).sourceInputStream(inputStream).execute();
 
         PersistenceSession persistenceSession = commandContext.getPersistenceSession();

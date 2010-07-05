@@ -117,6 +117,8 @@ public class BpmnParse extends Parse {
   protected CommandContext commandContext;
 
   private final ExpressionManager expressionManager;
+
+  private final ScriptingEngines scriptingEngines;
   
   /**
    * Constructor to be called by the {@link BpmnParser}.
@@ -124,9 +126,10 @@ public class BpmnParse extends Parse {
    * Note the package modifier here: only the {@link BpmnParser} is allowed to
    * create instances.
    */
-  BpmnParse(Parser parser, ExpressionManager expressionManager) {
+  BpmnParse(Parser parser, ExpressionManager expressionManager, ScriptingEngines scriptingEngines) {
     super(parser);
     this.expressionManager = expressionManager;
+    this.scriptingEngines = scriptingEngines;
     setSchemaResource(BpmnParser.SCHEMA_RESOURCE);
   }
   
@@ -845,7 +848,7 @@ public class BpmnParse extends Parse {
         language = ScriptingEngines.DEFAULT_EXPRESSION_LANGUAGE;
       }
       
-      seqFlow.setCondition(new ExpressionCondition(expr, language));
+      seqFlow.setCondition(new ExpressionCondition(scriptingEngines, expr, language));
     }
   }
   

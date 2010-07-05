@@ -113,7 +113,7 @@ public class DbExecutionImpl extends ExecutionImpl implements PersistentObject {
        ) {
       processDefinition = CommandContext
         .getCurrent()
-        .getProcessCache()
+        .getPersistenceSession()
         .findProcessDefinitionById(processDefinitionId);
     }
     return processDefinition;

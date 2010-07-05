@@ -68,6 +68,10 @@ public class CachingPersistenceSessionFactory implements PersistenceSessionFacto
 
   private void addProcessDefinition(PersistenceSession persistenceSession, ProcessDefinitionImpl processDefinition) {
  
+    if (processDefinition==null) {
+      return;
+    }
+
     if (processDefinition.isNew()) {
       ProcessDefinitionImpl latestProcessDefinition = persistenceSession.findLatestProcessDefinitionByKey(processDefinition.getKey());
       if (latestProcessDefinition!=null) {

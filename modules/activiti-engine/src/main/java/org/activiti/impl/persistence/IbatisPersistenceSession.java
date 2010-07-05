@@ -132,6 +132,14 @@ public class IbatisPersistenceSession implements PersistenceSession {
     sqlSession.close();
   }
   
+  public void commit() {
+    sqlSession.commit();
+  }
+  
+  public void rollback() {
+    sqlSession.rollback();
+  }
+  
   public String statement(String statement) {
     return databaseStatements.get(statement);
   }

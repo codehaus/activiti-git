@@ -44,6 +44,9 @@ import org.activiti.impl.variable.VariableInstance;
  */
 public interface PersistenceSession extends Session {
   
+  void commit();
+  void rollback();
+  
   /* Deployment */
   List<DeploymentImpl> findDeployments();
   DeploymentImpl findDeployment(String deploymentId);

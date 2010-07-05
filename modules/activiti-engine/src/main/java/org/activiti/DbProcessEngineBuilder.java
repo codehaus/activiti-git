@@ -18,6 +18,7 @@ import java.util.Properties;
 
 import org.activiti.impl.cfg.ProcessEngineConfiguration;
 import org.activiti.impl.db.IdGenerator;
+import org.activiti.impl.persistence.CachingPersistenceSessionFactory;
 import org.activiti.impl.persistence.IbatisPersistenceSessionFactory;
 import org.activiti.impl.persistence.PersistenceSessionFactory;
 
@@ -247,7 +248,7 @@ public class DbProcessEngineBuilder {
     
 
     persistenceSessionFactory = new IbatisPersistenceSessionFactory(idGenerator, databaseName, jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
-    // persistenceSessionFactory = new CachingPersistenceSessionFactory(persistenceSessionFactory, Thread.currentThread().getContextClassLoader());
+    persistenceSessionFactory = new CachingPersistenceSessionFactory(persistenceSessionFactory, Thread.currentThread().getContextClassLoader());
     processEngineConfiguration.setPersistenceSessionFactory(persistenceSessionFactory);
 
     return processEngineConfiguration.buildProcessEngine();

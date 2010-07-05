@@ -37,6 +37,7 @@ import org.activiti.impl.job.TimerExecuteNestedActivityJobHandler;
 import org.activiti.impl.jobexecutor.JobExecutor;
 import org.activiti.impl.msg.JobExecutorMessageSessionFactory;
 import org.activiti.impl.msg.MessageSessionFactory;
+import org.activiti.impl.persistence.CachingPersistenceSessionFactory;
 import org.activiti.impl.persistence.IbatisIdentitySessionFactory;
 import org.activiti.impl.persistence.IbatisPersistenceSessionFactory;
 import org.activiti.impl.persistence.PersistenceSessionFactory;
@@ -191,7 +192,8 @@ public class ProcessEngineConfiguration {
   }
 
   protected PersistenceSessionFactory createDefaultPersistenceSessionFactory(IdGenerator idGenerator) {
-    IbatisPersistenceSessionFactory persistenceSessionFactory = new IbatisPersistenceSessionFactory(idGenerator, "h2", "org.h2.Driver", "jdbc:h2:mem:activiti", "sa", "");
+    PersistenceSessionFactory persistenceSessionFactory = new IbatisPersistenceSessionFactory(idGenerator, "h2", "org.h2.Driver", "jdbc:h2:mem:activiti", "sa", "");
+    persistenceSessionFactory = new CachingPersistenceSessionFactory(persistenceSessionFactory, Thread.currentThread().getContextClassLoader());
     return persistenceSessionFactory;
   }
 

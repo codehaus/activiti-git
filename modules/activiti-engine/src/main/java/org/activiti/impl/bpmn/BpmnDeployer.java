@@ -23,9 +23,9 @@ import org.activiti.impl.definition.ProcessDefinitionDbImpl;
 import org.activiti.impl.definition.ProcessDefinitionImpl;
 import org.activiti.impl.el.ExpressionManager;
 import org.activiti.impl.interceptor.CommandContext;
+import org.activiti.impl.persistence.PersistenceSession;
 import org.activiti.impl.repository.Deployer;
 import org.activiti.impl.repository.DeploymentImpl;
-import org.activiti.impl.repository.ProcessCache;
 
 /**
  * @author Tom Baeyens
@@ -56,12 +56,12 @@ public class BpmnDeployer implements Deployer {
         BpmnParse bpmnParse = new BpmnParser(expressionManager).createParse().processDefinitionClass(ProcessDefinitionDbImpl.class).commandContext(
                 commandContext).sourceInputStream(inputStream).execute();
 
-        ProcessCache processCache = commandContext.getProcessCache();
+        PersistenceSession persistenceSession = commandContext.getPersistenceSession();
 
         for (ProcessDefinitionImpl processDefinition : bpmnParse.getProcessDefinitions()) {
           processDefinition.setDeployment(deployment);
           processDefinition.setNew(deployment.isNew());
-          processCache.setProcessDefinition(processDefinition);
+          persistenceSession.insertProcessDefinition(processDefinition);
         }
 
       }

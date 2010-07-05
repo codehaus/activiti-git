@@ -108,9 +108,9 @@ public class ProcessEngineConfiguration {
     jobExecutor = createDefaultJobExecutor(commandExecutor, jobHandlers);
     idGenerator = createDefaultIdGenerator(commandExecutor);
 
-    processService = createDefaultProcessService(commandExecutor, deployerManager);
+    processService = createDefaultProcessService(commandExecutor, deployerManager, scriptingEngines);
     identityService = createDefaultIdentityService(commandExecutor);
-    taskService = createDefaultTaskService(commandExecutor);
+    taskService = createDefaultTaskService(commandExecutor, scriptingEngines);
     managementService = createDefaultManagementService(commandExecutor);
 
     persistenceSessionFactory = createDefaultPersistenceSessionFactory(idGenerator);
@@ -163,8 +163,8 @@ public class ProcessEngineConfiguration {
     return managementService;
   }
 
-  protected TaskServiceImpl createDefaultTaskService(CommandExecutor commandExecutor) {
-    TaskServiceImpl taskService = new TaskServiceImpl(commandExecutor);
+  protected TaskServiceImpl createDefaultTaskService(CommandExecutor commandExecutor, ScriptingEngines scriptingEngines) {
+    TaskServiceImpl taskService = new TaskServiceImpl(commandExecutor, scriptingEngines);
     return taskService;
   }
 
@@ -173,8 +173,8 @@ public class ProcessEngineConfiguration {
     return identityService;
   }
 
-  protected ProcessServiceImpl createDefaultProcessService(CommandExecutor commandExecutor, DeployerManager deployerManager) {
-    ProcessServiceImpl processService = new ProcessServiceImpl(commandExecutor, deployerManager);
+  protected ProcessServiceImpl createDefaultProcessService(CommandExecutor commandExecutor, DeployerManager deployerManager, ScriptingEngines scriptingEngines) {
+    ProcessServiceImpl processService = new ProcessServiceImpl(commandExecutor, deployerManager, scriptingEngines);
     return processService;
   }
 

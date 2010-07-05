@@ -46,6 +46,7 @@ import org.activiti.impl.interceptor.CommandExecutor;
 import org.activiti.impl.repository.DeployerManager;
 import org.activiti.impl.repository.DeploymentBuilderImpl;
 import org.activiti.impl.repository.DeploymentImpl;
+import org.activiti.impl.scripting.ScriptingEngines;
 
 
 /**
@@ -56,10 +57,13 @@ public class ProcessServiceImpl implements ProcessService {
   private final CommandExecutor commandExecutor;
   
   private final DeployerManager deployerManager;
+
+  private final ScriptingEngines scriptingEngines;
   
-  public ProcessServiceImpl(CommandExecutor commandExecutor, DeployerManager deployerManager) {
+  public ProcessServiceImpl(CommandExecutor commandExecutor, DeployerManager deployerManager, ScriptingEngines scriptingEngines) {
     this.commandExecutor = commandExecutor;
-    this.deployerManager = deployerManager;  
+    this.deployerManager = deployerManager;
+    this.scriptingEngines = scriptingEngines;  
   }
 
   public DeploymentBuilder createDeployment() {
@@ -152,11 +156,11 @@ public class ProcessServiceImpl implements ProcessService {
   }
 
   public Object getStartFormById(String processDefinitionId) {
-    return commandExecutor.execute(new GetFormCmd(processDefinitionId, null, null));
+    return commandExecutor.execute(new GetFormCmd(scriptingEngines, processDefinitionId, null, null));
   }
 
   public Object getStartFormByKey(String processDefinitionKey) {
-    return commandExecutor.execute(new GetFormCmd(null, processDefinitionKey, null));
+    return commandExecutor.execute(new GetFormCmd(scriptingEngines, null, processDefinitionKey, null));
   }
 
   public void sendEvent(String executionId) {

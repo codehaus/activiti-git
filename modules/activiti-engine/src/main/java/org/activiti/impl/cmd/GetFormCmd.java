@@ -31,11 +31,13 @@ import org.activiti.impl.task.TaskImpl;
  */
 public class GetFormCmd implements Command<Object> {
 
-  protected String processDefinitionId;
-  protected String processDefinitionKey;
-  protected String taskId;
+  private final String processDefinitionId;
+  private final String processDefinitionKey;
+  private final String taskId;
+  private final ScriptingEngines scriptingEngines;
   
-  public GetFormCmd(String processDefinitionId, String processDefinitionKey, String taskId) {
+  public GetFormCmd(ScriptingEngines scriptingEngines, String processDefinitionId, String processDefinitionKey, String taskId) {
+    this.scriptingEngines = scriptingEngines;
     this.processDefinitionId = processDefinitionId;
     this.processDefinitionKey = processDefinitionKey;
     this.taskId = taskId;
@@ -83,7 +85,6 @@ public class GetFormCmd implements Command<Object> {
       String form = formReference.getForm();
       String formTemplateString = getFormTemplateString(form, deployment);      
       
-      ScriptingEngines scriptingEngines = commandContext.getScriptingEngines();
       result = scriptingEngines.evaluate(formTemplateString, formLanguage, execution);
     }
 

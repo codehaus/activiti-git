@@ -12,7 +12,6 @@
  */
 package org.activiti.impl.scripting;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.script.Bindings;
@@ -24,7 +23,6 @@ import javax.script.SimpleBindings;
 
 import org.activiti.ActivitiException;
 import org.activiti.impl.execution.ExecutionImpl;
-import org.activiti.impl.interceptor.CommandContext;
 
 
 /**
@@ -33,8 +31,6 @@ import org.activiti.impl.interceptor.CommandContext;
 public class ScriptingEngines {
   
   public static final String DEFAULT_EXPRESSION_LANGUAGE =  "juel"; 
-
-  private static ScriptingEngines defaultScriptingEngines = new ScriptingEngines();
 
   private final ScriptEngineManager scriptEngineManager;
   
@@ -51,16 +47,6 @@ public class ScriptingEngines {
     return this;
   }
 
-
-  public static ScriptingEngines getScriptingEngines() {
-    CommandContext commandContext = CommandContext.getCurrent();
-    if (commandContext!=null) {
-      return commandContext
-        .getScriptingEngines();
-    }
-    return defaultScriptingEngines;
-  }
-  
   public void setScriptEngineFactories(List<ScriptEngineFactory> scriptEngineFactories) {
     if (scriptEngineFactories!=null) {
       for (ScriptEngineFactory scriptEngineFactory: scriptEngineFactories) {

@@ -762,7 +762,7 @@ public class BpmnParse extends Parse {
     String srcExpr = propertyElement.attributeNS(BpmnParser.BPMN_EXTENSIONS_NS, "srcExpr");
     if (srcExpr != null) {
       activity.addEventListener(Listener.EVENTNAME_START, 
-              new VariableInitializeWithExpression(propertyName, srcExpr, "juel"));
+              new VariableInitializeWithExpression(scriptingEngines, propertyName, srcExpr, "juel"));
     }
     
     String dst = propertyElement.attributeNS(BpmnParser.BPMN_EXTENSIONS_NS, "dst");
@@ -789,7 +789,7 @@ public class BpmnParse extends Parse {
     if (linkExpr != null) {
       expressionManager.createValueExpression(linkExpr);
       activity.addEventListener(Listener.EVENTNAME_START, 
-              new VariableInitializeWithExpression(linkExpr, propertyName, "juel"));
+              new VariableInitializeWithExpression(scriptingEngines, linkExpr, propertyName, "juel"));
       activity.addEventListener(Listener.EVENTNAME_END, 
               new VariableDestroyWithExpression(scriptingEngines, propertyName, linkExpr, "juel"));
     }

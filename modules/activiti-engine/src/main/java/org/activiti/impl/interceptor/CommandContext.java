@@ -22,7 +22,6 @@ import org.activiti.ActivitiException;
 import org.activiti.impl.calendar.BusinessCalendarManager;
 import org.activiti.impl.msg.MessageSession;
 import org.activiti.impl.persistence.PersistenceSession;
-import org.activiti.impl.scripting.ScriptingEngines;
 import org.activiti.impl.timer.TimerSession;
 import org.activiti.impl.tx.Session;
 import org.activiti.impl.tx.TransactionContext;
@@ -188,10 +187,6 @@ public class CommandContext {
 
   public TransactionContext getTransactionContext() {
     return transactionContext;
-  }
-
-  public ScriptingEngines getScriptingEngines() {
-    return commandContextFactory.getProcessEngineConfiguration().getScriptingEngines();
   }
 
   public VariableTypes getVariableTypes() {

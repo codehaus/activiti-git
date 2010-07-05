@@ -367,7 +367,7 @@ public class BpmnParse extends Parse {
         language = ScriptingEngines.DEFAULT_EXPRESSION_LANGUAGE;
       }
     }
-    activity.setActivityBehavior(new ScriptTaskActivity(script, language));
+    activity.setActivityBehavior(new ScriptTaskActivity(scriptingEngines, script, language));
   }
   
   /**
@@ -774,7 +774,7 @@ public class BpmnParse extends Parse {
     String destExpr = propertyElement.attributeNS(BpmnParser.BPMN_EXTENSIONS_NS, "dstExpr");
     if (destExpr != null) {
       activity.addEventListener(Listener.EVENTNAME_END, 
-              new VariableDestroyWithExpression(propertyName, destExpr, "juel"));
+              new VariableDestroyWithExpression(scriptingEngines, propertyName, destExpr, "juel"));
     }
     
     String link = propertyElement.attributeNS(BpmnParser.BPMN_EXTENSIONS_NS, "link");
@@ -791,7 +791,7 @@ public class BpmnParse extends Parse {
       activity.addEventListener(Listener.EVENTNAME_START, 
               new VariableInitializeWithExpression(linkExpr, propertyName, "juel"));
       activity.addEventListener(Listener.EVENTNAME_END, 
-              new VariableDestroyWithExpression(propertyName, linkExpr, "juel"));
+              new VariableDestroyWithExpression(scriptingEngines, propertyName, linkExpr, "juel"));
     }
   }
   

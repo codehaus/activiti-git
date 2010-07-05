@@ -25,8 +25,6 @@ import org.activiti.impl.job.JobHandlers;
 import org.activiti.impl.jobexecutor.JobExecutor;
 import org.activiti.impl.msg.MessageSession;
 import org.activiti.impl.persistence.PersistenceSession;
-import org.activiti.impl.persistence.PersistenceSessionFactory;
-import org.activiti.impl.repository.DeployerManager;
 import org.activiti.impl.repository.ProcessCache;
 import org.activiti.impl.scripting.ScriptingEngines;
 import org.activiti.impl.timer.TimerSession;
@@ -42,19 +40,19 @@ public class CommandContext {
   
   private static Logger log = Logger.getLogger(CommandContext.class.getName());
 
-  static ThreadLocal<Stack<CommandContext>> txContextStacks = new ThreadLocal<Stack<CommandContext>>();
+  private static ThreadLocal<Stack<CommandContext>> txContextStacks = new ThreadLocal<Stack<CommandContext>>();
   
-  protected CommandContextFactory commandContextFactory;
-  protected Command<?> command;
-  protected Throwable exception = null;
+  private CommandContextFactory commandContextFactory;
+  private Command<?> command;
+  private Throwable exception = null;
 
-  protected PersistenceSession persistenceSession;
-  protected MessageSession messageSession;
-  protected TimerSession timerSession;
-  protected TransactionContext transactionContext;
+  private PersistenceSession persistenceSession;
+  private MessageSession messageSession;
+  private TimerSession timerSession;
+  private TransactionContext transactionContext;
 
-  protected Map<Class< ? >, SessionFactory> sessionFactories;
-  protected Map<Class< ? >, Session> sessions = new HashMap<Class<?>, Session>();
+  private Map<Class< ? >, SessionFactory> sessionFactories;
+  private Map<Class< ? >, Session> sessions = new HashMap<Class<?>, Session>();
 
   public CommandContext(Command<?> command, 
                         CommandContextFactory commandContextFactory) {
@@ -214,10 +212,6 @@ public class CommandContext {
   }
 
   
-  public DeployerManager getDeployerManager() {
-    return commandContextFactory.getProcessEngineConfiguration().getDeployerManager();
-  }
-
   public ProcessCache getProcessCache() {
     return commandContextFactory.getProcessEngineConfiguration().getProcessCache();
   }
@@ -228,10 +222,6 @@ public class CommandContext {
 
   public VariableTypes getVariableTypes() {
     return commandContextFactory.getProcessEngineConfiguration().getVariableTypes();
-  }
-  
-  public PersistenceSessionFactory getPersistenceSessionFactory() {
-    return commandContextFactory.getProcessEngineConfiguration().getPersistenceSessionFactory();
   }
   
   public ExpressionManager getExpressionManager() {

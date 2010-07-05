@@ -64,31 +64,31 @@ import com.sun.script.juel.JuelScriptEngineFactory;
  */
 public class ProcessEngineConfiguration {
 
-  String processEngineName;
+  private String processEngineName;
 
-  ProcessService processService;
-  IdentityService identityService;
-  TaskService taskService;
-  ManagementService managementService;
+  private ProcessService processService;
+  private IdentityService identityService;
+  private TaskService taskService;
+  private ManagementService managementService;
 
-  DeployerManager deployerManager;
-  VariableTypes variableTypes;
-  ScriptingEngines scriptingEngines;
-  JobExecutor jobExecutor;
-  boolean jobExecutorAutoActivate;
-  IdGenerator idGenerator;
-  ProcessCache processCache;
-  CommandExecutor commandExecutor;
-  DbSchemaStrategy dbSchemaStrategy;
-  ExpressionManager expressionManager;
-  JobHandlers jobHandlers;
-  BusinessCalendarManager businessCalendarManager;
+  private DeployerManager deployerManager;
+  private VariableTypes variableTypes;
+  private ScriptingEngines scriptingEngines;
+  private JobExecutor jobExecutor;
+  private boolean jobExecutorAutoActivate;
+  private IdGenerator idGenerator;
+  private ProcessCache processCache;
+  private CommandExecutor commandExecutor;
+  private DbSchemaStrategy dbSchemaStrategy;
+  private ExpressionManager expressionManager;
+  private JobHandlers jobHandlers;
+  private BusinessCalendarManager businessCalendarManager;
 
-  CommandContextFactory commandContextFactory;
-  PersistenceSessionFactory persistenceSessionFactory;
-  MessageSessionFactory messageSessionFactory;
-  TimerSessionFactory timerSessionFactory;
-  TransactionContextFactory transactionContextFactory;
+  private CommandContextFactory commandContextFactory;
+  private PersistenceSessionFactory persistenceSessionFactory;
+  private MessageSessionFactory messageSessionFactory;
+  private TimerSessionFactory timerSessionFactory;
+  private TransactionContextFactory transactionContextFactory;
 
   public ProcessEngineConfiguration() {
     this(null);
@@ -109,7 +109,7 @@ public class ProcessEngineConfiguration {
     businessCalendarManager = createDefaultBusinessCalendarManager();
 
     processCache = createDefaultProcessCache(deployerManager);
-    jobExecutor = createDefaultJobExecutor(commandExecutor);
+    jobExecutor = createDefaultJobExecutor(commandExecutor, jobHandlers);
     idGenerator = createDefaultIdGenerator(commandExecutor);
 
     processService = createDefaultProcessService(commandExecutor, deployerManager);
@@ -118,8 +118,8 @@ public class ProcessEngineConfiguration {
     managementService = createDefaultManagementService(commandExecutor);
 
     persistenceSessionFactory = createDefaultPersistenceSessionFactory(idGenerator);
-    messageSessionFactory = createDefaultMessageSessionFactory();
-    timerSessionFactory = createDefaultTimerSessionFactory();
+    messageSessionFactory = createDefaultMessageSessionFactory(jobExecutor);
+    timerSessionFactory = createDefaultTimerSessionFactory(jobExecutor);
     transactionContextFactory = createDefaultTransactionContextFactory();
   }
 
@@ -133,8 +133,8 @@ public class ProcessEngineConfiguration {
     return defaultBusinessCalendarManager;
   }
 
-  protected TimerSessionFactory createDefaultTimerSessionFactory() {
-    return new JobExecutorTimerSessionFactory();
+  protected TimerSessionFactory createDefaultTimerSessionFactory(JobExecutor jobExecutor) {
+    return new JobExecutorTimerSessionFactory(jobExecutor);
   }
 
   protected TransactionContextFactory createDefaultTransactionContextFactory() {
@@ -157,8 +157,8 @@ public class ProcessEngineConfiguration {
     return commandContextFactory;
   }
 
-  protected JobExecutor createDefaultJobExecutor(CommandExecutor commandExecutor) {
-    JobExecutor jobExecutor = new JobExecutor(commandExecutor);
+  protected JobExecutor createDefaultJobExecutor(CommandExecutor commandExecutor, JobHandlers jobHandlers) {
+    JobExecutor jobExecutor = new JobExecutor(commandExecutor, jobHandlers);
     return jobExecutor;
   }
 
@@ -186,8 +186,8 @@ public class ProcessEngineConfiguration {
     return DbSchemaStrategy.CREATE_DROP;
   }
 
-  protected MessageSessionFactory createDefaultMessageSessionFactory() {
-    return new JobExecutorMessageSessionFactory();
+  protected MessageSessionFactory createDefaultMessageSessionFactory(JobExecutor jobExecutor) {
+    return new JobExecutorMessageSessionFactory(jobExecutor);
   }
 
   protected PersistenceSessionFactory createDefaultPersistenceSessionFactory(IdGenerator idGenerator) {

@@ -42,7 +42,6 @@ import org.activiti.impl.persistence.IbatisIdentitySessionFactory;
 import org.activiti.impl.persistence.IbatisPersistenceSessionFactory;
 import org.activiti.impl.persistence.PersistenceSessionFactory;
 import org.activiti.impl.repository.DeployerManager;
-import org.activiti.impl.repository.ProcessCache;
 import org.activiti.impl.scripting.ScriptingEngines;
 import org.activiti.impl.timer.JobExecutorTimerSessionFactory;
 import org.activiti.impl.timer.TimerSessionFactory;
@@ -78,7 +77,6 @@ public class ProcessEngineConfiguration {
   private JobExecutor jobExecutor;
   private boolean jobExecutorAutoActivate;
   private IdGenerator idGenerator;
-  private ProcessCache processCache;
   private CommandExecutor commandExecutor;
   private DbSchemaStrategy dbSchemaStrategy;
   private ExpressionManager expressionManager;
@@ -109,7 +107,6 @@ public class ProcessEngineConfiguration {
     jobHandlers = createDefaultJobHandlers();
     businessCalendarManager = createDefaultBusinessCalendarManager();
 
-    processCache = createDefaultProcessCache(deployerManager);
     jobExecutor = createDefaultJobExecutor(commandExecutor, jobHandlers);
     idGenerator = createDefaultIdGenerator(commandExecutor);
 
@@ -216,12 +213,6 @@ public class ProcessEngineConfiguration {
     return idGenerator;
   }
 
-  protected ProcessCache createDefaultProcessCache(DeployerManager deployerManager) {
-    ProcessCache processCache = new ProcessCache();
-    processCache.setDeployerManager(deployerManager);
-    return processCache;
-  }
-
   protected DeployerManager createDefaultDeployerManager(ExpressionManager expressionManager) {
     return new DeployerManager().addDeployer(new BpmnDeployer(expressionManager));
   }
@@ -239,14 +230,6 @@ public class ProcessEngineConfiguration {
 
   public void setDeployerManager(DeployerManager deployerManager) {
     this.deployerManager = deployerManager;
-  }
-
-  public ProcessCache getProcessCache() {
-    return processCache;
-  }
-
-  public void setProcessCache(ProcessCache processCache) {
-    this.processCache = processCache;
   }
 
   public VariableTypes getTypes() {

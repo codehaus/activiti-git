@@ -191,7 +191,8 @@ public class ProcessEngineConfiguration {
   }
 
   protected PersistenceSessionFactory createDefaultPersistenceSessionFactory(IdGenerator idGenerator) {
-    return new IbatisPersistenceSessionFactory(idGenerator, "h2", "org.h2.Driver", "jdbc:h2:mem:activiti", "sa", "");
+    IbatisPersistenceSessionFactory persistenceSessionFactory = new IbatisPersistenceSessionFactory(idGenerator, "h2", "org.h2.Driver", "jdbc:h2:mem:activiti", "sa", "");
+    return persistenceSessionFactory;
   }
 
   protected CommandExecutor createDefaultCmdExecutor(CommandContextFactory commandContextFactory) {

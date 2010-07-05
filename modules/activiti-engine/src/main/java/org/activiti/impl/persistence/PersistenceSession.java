@@ -40,7 +40,7 @@ import org.activiti.impl.variable.VariableInstance;
 
 /**
  * @author Tom Baeyens
- * @author Joram BarrezS
+ * @author Joram Barrez
  */
 public interface PersistenceSession extends Session {
   

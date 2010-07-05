@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 
 import org.activiti.ActivitiException;
 import org.activiti.impl.calendar.BusinessCalendarManager;
-import org.activiti.impl.el.ExpressionManager;
 import org.activiti.impl.msg.MessageSession;
 import org.activiti.impl.persistence.PersistenceSession;
 import org.activiti.impl.repository.ProcessCache;

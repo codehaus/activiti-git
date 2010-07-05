@@ -55,6 +55,7 @@ import org.activiti.impl.variable.VariableInitializeWithExpression;
 import org.activiti.impl.variable.VariableInitializeWithVariable;
 import org.activiti.impl.xml.Element;
 import org.activiti.impl.xml.Parse;
+import org.activiti.impl.xml.Parser;
 import org.activiti.pvm.ActivityBehavior;
 import org.activiti.pvm.Listener;
 
@@ -114,6 +115,8 @@ public class BpmnParse extends Parse {
    * Gives acces to process-engine configuration objects.
    */
   protected CommandContext commandContext;
+
+  private final ExpressionManager expressionManager;
   
   /**
    * Constructor to be called by the {@link BpmnParser}.
@@ -121,8 +124,9 @@ public class BpmnParse extends Parse {
    * Note the package modifier here: only the {@link BpmnParser} is allowed to
    * create instances.
    */
-  BpmnParse(BpmnParser bpmnParser) {
-    super(bpmnParser);
+  BpmnParse(Parser parser, ExpressionManager expressionManager) {
+    super(parser);
+    this.expressionManager = expressionManager;
     setSchemaResource(BpmnParser.SCHEMA_RESOURCE);
   }
   
@@ -781,7 +785,6 @@ public class BpmnParse extends Parse {
     
     String linkExpr = propertyElement.attributeNS(BpmnParser.BPMN_EXTENSIONS_NS, "linkExpr");
     if (linkExpr != null) {
-      ExpressionManager expressionManager = commandContext.getExpressionManager();
       expressionManager.createValueExpression(linkExpr);
       activity.addEventListener(Listener.EVENTNAME_START, 
               new VariableInitializeWithExpression(linkExpr, propertyName, "juel"));
@@ -864,17 +867,6 @@ public class BpmnParse extends Parse {
   public BpmnParse processDefinitionClass(Class<? extends ProcessDefinition> processDefinitionClass) {
     this.processDefinitionClass = processDefinitionClass;
     return this;
-  }
-  
-  public CommandContext getCommandContext() {
-    return commandContext;
-  }
-  
-  public ExpressionManager getExpressionManager() {
-    if (commandContext==null) {
-      throw new ActivitiException("no command context set");
-    }
-    return commandContext.getExpressionManager();
   }
   
   public BpmnParse commandContext(CommandContext commandContext) {

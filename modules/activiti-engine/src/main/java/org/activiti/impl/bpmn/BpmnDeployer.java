@@ -21,50 +21,52 @@ import org.activiti.impl.bpmn.parser.BpmnParser;
 import org.activiti.impl.bytes.ByteArrayImpl;
 import org.activiti.impl.definition.ProcessDefinitionDbImpl;
 import org.activiti.impl.definition.ProcessDefinitionImpl;
+import org.activiti.impl.el.ExpressionManager;
 import org.activiti.impl.interceptor.CommandContext;
 import org.activiti.impl.repository.Deployer;
 import org.activiti.impl.repository.DeploymentImpl;
 import org.activiti.impl.repository.ProcessCache;
 
-
 /**
  * @author Tom Baeyens
  */
 public class BpmnDeployer implements Deployer {
-  
+
   private static final Logger LOG = Logger.getLogger(BpmnDeployer.class.getName());;
-  
+
   public static final String BPMN_RESOURCE_SUFFIX = "bpmn20.xml";
-  
+
+  private final ExpressionManager expressionManager;
+
+  public BpmnDeployer(ExpressionManager expressionManager) {
+    this.expressionManager = expressionManager;
+  }
+
   public void deploy(DeploymentImpl deployment, CommandContext commandContext) {
-    
+
     Map<String, ByteArrayImpl> resources = deployment.getResources();
-    
-    for (String resourceName: resources.keySet()) {
-      
+
+    for (String resourceName : resources.keySet()) {
+
       LOG.info("Processing resource " + resourceName);
       if (resourceName.endsWith(BPMN_RESOURCE_SUFFIX)) {
         ByteArrayImpl resource = resources.get(resourceName);
         byte[] bytes = resource.getBytes();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        BpmnParse bpmnParse = BpmnParser.INSTANCE
-          .createParse()
-          .processDefinitionClass(ProcessDefinitionDbImpl.class)
-          .commandContext(commandContext)
-          .sourceInputStream(inputStream)
-          .execute();
-        
+        BpmnParse bpmnParse = new BpmnParser(expressionManager).createParse().processDefinitionClass(ProcessDefinitionDbImpl.class).commandContext(
+                commandContext).sourceInputStream(inputStream).execute();
+
         ProcessCache processCache = commandContext.getProcessCache();
-        
-        for (ProcessDefinitionImpl processDefinition: bpmnParse.getProcessDefinitions()) {
+
+        for (ProcessDefinitionImpl processDefinition : bpmnParse.getProcessDefinitions()) {
           processDefinition.setDeployment(deployment);
           processDefinition.setNew(deployment.isNew());
           processCache.setProcessDefinition(processDefinition);
         }
 
-      }  
+      }
     }
-    
+
   }
 
   public void delete(DeploymentImpl deployment, CommandContext commandContext) {

@@ -99,12 +99,12 @@ public class ProcessEngineConfiguration {
     this.commandContextFactory = commandContextFactory == null ? createDefaultCommandContextFactory() : commandContextFactory;
     commandExecutor = createDefaultCmdExecutor(this.commandContextFactory);
 
-    deployerManager = createDefaultDeployerManager();
+    expressionManager = createDefaultExpressionManager();
+    deployerManager = createDefaultDeployerManager(expressionManager);
     variableTypes = createDefaultVariableTypes();
     scriptingEngines = createDefaultScriptingEngines();
     dbSchemaStrategy = createDefaultDbSchemaStrategy();
     jobExecutorAutoActivate = createDefaultJobExecutorAutoActivate();
-    expressionManager = createDefaultExpressionManager();
     jobHandlers = createDefaultJobHandlers();
     businessCalendarManager = createDefaultBusinessCalendarManager();
 
@@ -219,8 +219,8 @@ public class ProcessEngineConfiguration {
     return processCache;
   }
 
-  protected DeployerManager createDefaultDeployerManager() {
-    return new DeployerManager().addDeployer(new BpmnDeployer());
+  protected DeployerManager createDefaultDeployerManager(ExpressionManager expressionManager) {
+    return new DeployerManager().addDeployer(new BpmnDeployer(expressionManager));
   }
 
   protected ExpressionManager createDefaultExpressionManager() {

@@ -204,10 +204,6 @@ public class CommandContext {
     return commandContextFactory.getProcessEngineConfiguration().getVariableTypes();
   }
 
-  public ExpressionManager getExpressionManager() {
-    return commandContextFactory.getProcessEngineConfiguration().getExpressionManager();
-  }
-
   public BusinessCalendarManager getBusinessCalendarManager() {
     return commandContextFactory.getProcessEngineConfiguration().getBusinessCalendarManager();
   }

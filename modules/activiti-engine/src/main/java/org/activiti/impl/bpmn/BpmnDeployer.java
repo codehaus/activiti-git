@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import org.activiti.impl.bpmn.parser.BpmnParse;
 import org.activiti.impl.bpmn.parser.BpmnParser;
 import org.activiti.impl.bytes.ByteArrayImpl;
+import org.activiti.impl.calendar.BusinessCalendarManager;
 import org.activiti.impl.definition.ProcessDefinitionDbImpl;
 import org.activiti.impl.definition.ProcessDefinitionImpl;
 import org.activiti.impl.el.ExpressionManager;
@@ -41,9 +42,12 @@ public class BpmnDeployer implements Deployer {
 
   private final ScriptingEngines scriptingEngines;
 
-  public BpmnDeployer(ExpressionManager expressionManager, ScriptingEngines scriptingEngines) {
+  private final BusinessCalendarManager businessCalendarManager;
+
+  public BpmnDeployer(ExpressionManager expressionManager, ScriptingEngines scriptingEngines, BusinessCalendarManager businessCalendarManager) {
     this.expressionManager = expressionManager;
     this.scriptingEngines = scriptingEngines;
+    this.businessCalendarManager = businessCalendarManager;
   }
 
   public void deploy(DeploymentImpl deployment, CommandContext commandContext) {
@@ -57,7 +61,7 @@ public class BpmnDeployer implements Deployer {
         ByteArrayImpl resource = resources.get(resourceName);
         byte[] bytes = resource.getBytes();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        BpmnParse bpmnParse = new BpmnParser(expressionManager, scriptingEngines).createParse().processDefinitionClass(ProcessDefinitionDbImpl.class).commandContext(
+        BpmnParse bpmnParse = new BpmnParser(expressionManager, scriptingEngines, businessCalendarManager).createParse().processDefinitionClass(ProcessDefinitionDbImpl.class).commandContext(
                 commandContext).sourceInputStream(inputStream).execute();
 
         PersistenceSession persistenceSession = commandContext.getPersistenceSession();

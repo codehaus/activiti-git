@@ -15,14 +15,11 @@ package org.activiti.impl.execution;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.activiti.ActivitiException;
-import org.activiti.impl.calendar.BusinessCalendar;
-import org.activiti.impl.calendar.BusinessCalendarManager;
 import org.activiti.impl.definition.ActivityImpl;
 import org.activiti.impl.definition.ProcessDefinitionImpl;
 import org.activiti.impl.definition.TransitionImpl;
@@ -413,18 +410,10 @@ public class ExecutionImpl implements
   }
 
   public void createTimer(TimerDeclarationImpl timerDeclaration) {
-    BusinessCalendarManager businessCalendarManager = CommandContext
-      .getCurrent()
-      .getBusinessCalendarManager();
-    
-    BusinessCalendar businessCalendar = businessCalendarManager
-      .getBusinessCalendar(timerDeclaration.getBusinessCalendarRef());
-    
-    Date duedate = businessCalendar.resolveDuedate(timerDeclaration.getDuedate());
     
     TimerImpl timer = new TimerImpl();
     timer.setExecution(this);
-    timer.setDuedate( duedate );
+    timer.setDuedate( timerDeclaration.getDuedate() );
     timer.setJobHandlerType( timerDeclaration.getJobHandlerType() );
     timer.setJobHandlerConfiguration( timerDeclaration.getJobHandlerConfiguration() );
     timer.setExclusive(timerDeclaration.isExclusive());

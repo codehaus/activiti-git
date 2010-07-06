@@ -12,6 +12,7 @@
  */
 package org.activiti.impl.bpmn.parser;
 
+import org.activiti.impl.calendar.BusinessCalendarManager;
 import org.activiti.impl.el.ExpressionManager;
 import org.activiti.impl.scripting.ScriptingEngines;
 import org.activiti.impl.xml.Parser;
@@ -47,10 +48,13 @@ public class BpmnParser extends Parser {
   private final ExpressionManager expressionManager;
 
   private final ScriptingEngines scriptingEngines;
+
+  private final BusinessCalendarManager businessCalendarManager;
   
-  public BpmnParser(ExpressionManager expressionManager, ScriptingEngines scriptingEngines) {
+  public BpmnParser(ExpressionManager expressionManager, ScriptingEngines scriptingEngines, BusinessCalendarManager businessCalendarManager) {
     this.expressionManager = expressionManager;
     this.scriptingEngines = scriptingEngines;
+    this.businessCalendarManager = businessCalendarManager;
   }
   
   /**
@@ -58,7 +62,7 @@ public class BpmnParser extends Parser {
    * to parse only one BPMN 2.0 process definition.
    */
   public BpmnParse createParse() {
-    return new BpmnParse(this, expressionManager, scriptingEngines);
+    return new BpmnParse(this, expressionManager, scriptingEngines, businessCalendarManager);
   }
   
 }

@@ -98,12 +98,12 @@ public class ProcessEngineConfiguration {
 
     expressionManager = createDefaultExpressionManager();
     scriptingEngines = createDefaultScriptingEngines();
-    deployerManager = createDefaultDeployerManager(expressionManager, scriptingEngines);
+    businessCalendarManager = createDefaultBusinessCalendarManager();
+    deployerManager = createDefaultDeployerManager(expressionManager, scriptingEngines, businessCalendarManager);
     variableTypes = createDefaultVariableTypes();
     dbSchemaStrategy = createDefaultDbSchemaStrategy();
     jobExecutorAutoActivate = createDefaultJobExecutorAutoActivate();
     jobHandlers = createDefaultJobHandlers();
-    businessCalendarManager = createDefaultBusinessCalendarManager();
 
     jobExecutor = createDefaultJobExecutor(commandExecutor, jobHandlers);
     idGenerator = createDefaultIdGenerator(commandExecutor);
@@ -211,8 +211,8 @@ public class ProcessEngineConfiguration {
     return idGenerator;
   }
 
-  protected DeployerManager createDefaultDeployerManager(ExpressionManager expressionManager, ScriptingEngines scriptingEngines) {
-    return new DeployerManager().addDeployer(new BpmnDeployer(expressionManager, scriptingEngines));
+  protected DeployerManager createDefaultDeployerManager(ExpressionManager expressionManager, ScriptingEngines scriptingEngines, BusinessCalendarManager businessCalendarManager) {
+    return new DeployerManager().addDeployer(new BpmnDeployer(expressionManager, scriptingEngines, businessCalendarManager));
   }
 
   protected ExpressionManager createDefaultExpressionManager() {

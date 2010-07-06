@@ -19,7 +19,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.activiti.ActivitiException;
-import org.activiti.impl.calendar.BusinessCalendarManager;
 import org.activiti.impl.msg.MessageSession;
 import org.activiti.impl.persistence.PersistenceSession;
 import org.activiti.impl.timer.TimerSession;
@@ -193,7 +192,4 @@ public class CommandContext {
     return commandContextFactory.getProcessEngineConfiguration().getVariableTypes();
   }
 
-  public BusinessCalendarManager getBusinessCalendarManager() {
-    return commandContextFactory.getProcessEngineConfiguration().getBusinessCalendarManager();
-  }
 }

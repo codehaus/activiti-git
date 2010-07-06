@@ -33,15 +33,20 @@ import org.activiti.ProcessEngine;
 import org.activiti.impl.db.IdGenerator;
 import org.activiti.impl.interceptor.CommandContext;
 import org.activiti.impl.util.IoUtil;
+import org.activiti.impl.variable.Type;
+import org.activiti.impl.variable.VariableTypes;
+import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
+import org.apache.ibatis.type.JdbcType;
 
 /**
  * @author Tom Baeyens
@@ -146,16 +151,14 @@ public class IbatisPersistenceSessionFactory implements PersistenceSessionFactor
   }
 
   protected static void addDatabaseSpecificStatement(String databaseName, String activitiStatement, String ibatisStatement) {
-	Map<String, String> specificStatements = null;
-	if (databaseSpecificStatements==null) {
-	  databaseSpecificStatements = new HashMap<String, Map<String,String>>();	
+    Map<String, String> specificStatements = null;
+    if (databaseSpecificStatements == null) {
+      databaseSpecificStatements = new HashMap<String, Map<String, String>>();
       specificStatements = new HashMap<String, String>();
       databaseSpecificStatements.put(databaseName, specificStatements);
+    } else {
+      specificStatements = databaseSpecificStatements.get(databaseName);
     }
-	else
-	{
-		specificStatements = databaseSpecificStatements.get(databaseName);
-	}
 
     specificStatements.put(activitiStatement, ibatisStatement);
   }
@@ -165,11 +168,17 @@ public class IbatisPersistenceSessionFactory implements PersistenceSessionFactor
   protected final IdGenerator idGenerator;
   protected Map<String, String> databaseStatements;
 
-  public IbatisPersistenceSessionFactory(IdGenerator idGenerator, String databaseName, String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword) {
-    this(idGenerator, databaseName, new PooledDataSource(Thread.currentThread().getContextClassLoader(), jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword), true);
+  private final VariableTypes variableTypes;
+
+  public IbatisPersistenceSessionFactory(VariableTypes variableTypes, IdGenerator idGenerator, String databaseName, String jdbcDriver, String jdbcUrl,
+          String jdbcUsername, String jdbcPassword) {
+    this(variableTypes, idGenerator, databaseName, new PooledDataSource(Thread.currentThread().getContextClassLoader(), jdbcDriver, jdbcUrl, jdbcUsername,
+            jdbcPassword), true);
   }
 
-  public IbatisPersistenceSessionFactory(IdGenerator idGenerator, String databaseName, DataSource dataSource, boolean localTransactions) {
+  public IbatisPersistenceSessionFactory(VariableTypes variableTypes, IdGenerator idGenerator, String databaseName, DataSource dataSource,
+          boolean localTransactions) {
+    this.variableTypes = variableTypes;
     this.idGenerator = idGenerator;
     this.databaseName = databaseName;
     sqlSessionFactory = createSessionFactory(dataSource, localTransactions ? new JdbcTransactionFactory() : new ManagedTransactionFactory());
@@ -183,12 +192,15 @@ public class IbatisPersistenceSessionFactory implements PersistenceSessionFactor
       InputStream inputStream = classLoader.getResourceAsStream("org/activiti/db/ibatis/activiti.ibatis.mem.conf.xml");
 
       // update the jdbc parameters to the configured ones...
-      Reader reader = new InputStreamReader(inputStream);
-      SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);      
-      
       Environment environment = new Environment("default", transactionFactory, dataSource);
-      sqlSessionFactory.getConfiguration().setEnvironment(environment);
-      return sqlSessionFactory;
+      Reader reader = new InputStreamReader(inputStream);
+      XMLConfigBuilder parser = new XMLConfigBuilder(reader);
+      Configuration configuration = parser.getConfiguration();
+      configuration.setEnvironment(environment);
+      configuration.getTypeHandlerRegistry().register(Type.class, JdbcType.VARCHAR, new IbatisVariableTypeHandler(variableTypes));
+      configuration = parser.parse();
+      
+      return new DefaultSqlSessionFactory(configuration);
 
     } catch (Exception e) {
       throw new ActivitiException("Error while building ibatis SqlSessionFactory: " + e.getMessage(), e);

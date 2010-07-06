@@ -113,7 +113,7 @@ public class ProcessEngineConfiguration {
     taskService = createDefaultTaskService(commandExecutor, scriptingEngines);
     managementService = createDefaultManagementService(commandExecutor);
 
-    persistenceSessionFactory = createDefaultPersistenceSessionFactory(idGenerator);
+    persistenceSessionFactory = createDefaultPersistenceSessionFactory(variableTypes, idGenerator);
     messageSessionFactory = createDefaultMessageSessionFactory(jobExecutor);
     timerSessionFactory = createDefaultTimerSessionFactory(jobExecutor);
     transactionContextFactory = createDefaultTransactionContextFactory();
@@ -186,8 +186,8 @@ public class ProcessEngineConfiguration {
     return new JobExecutorMessageSessionFactory(jobExecutor);
   }
 
-  protected PersistenceSessionFactory createDefaultPersistenceSessionFactory(IdGenerator idGenerator) {
-    PersistenceSessionFactory persistenceSessionFactory = new IbatisPersistenceSessionFactory(idGenerator, "h2", "org.h2.Driver", "jdbc:h2:mem:activiti", "sa", "");
+  protected PersistenceSessionFactory createDefaultPersistenceSessionFactory(VariableTypes variableTypes, IdGenerator idGenerator) {
+    PersistenceSessionFactory persistenceSessionFactory = new IbatisPersistenceSessionFactory(variableTypes, idGenerator, "h2", "org.h2.Driver", "jdbc:h2:mem:activiti", "sa", "");
     persistenceSessionFactory = new CachingPersistenceSessionFactory(persistenceSessionFactory, Thread.currentThread().getContextClassLoader());
     return persistenceSessionFactory;
   }
@@ -228,14 +228,6 @@ public class ProcessEngineConfiguration {
 
   public void setDeployerManager(DeployerManager deployerManager) {
     this.deployerManager = deployerManager;
-  }
-
-  public VariableTypes getTypes() {
-    return variableTypes;
-  }
-
-  public void setTypes(VariableTypes variableTypes) {
-    this.variableTypes = variableTypes;
   }
 
   public ScriptingEngines getScriptingEngines() {

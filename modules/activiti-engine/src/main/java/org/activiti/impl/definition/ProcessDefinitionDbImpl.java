@@ -25,7 +25,7 @@ public class ProcessDefinitionDbImpl extends ProcessDefinitionImpl {
 
   public ExecutionImpl createProcessInstance() {
     DbExecutionImpl execution = DbExecutionImpl.createAndInsert(this);
-    initializeVariableDeclarations(execution);
+    // TODO: maybe initialize variable declarations if needed;
     return execution;
   }
   

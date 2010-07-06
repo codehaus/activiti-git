@@ -40,16 +40,10 @@ public class ProcessDefinitionImpl extends ScopeElementImpl implements ObjectPro
   
   public ExecutionImpl createProcessInstance() {
     ExecutionImpl execution = new ExecutionImpl(this);
-    initializeVariableDeclarations(execution);
+    // TODO: maybe initialize variable declarations if needed;
     return execution;
   }
   
-  protected void initializeVariableDeclarations(ExecutionImpl execution) {
-    for (VariableDeclarationImpl varDec: getVariableDeclarations()) {
-      execution.createVariable(varDec.getName(), varDec.getType());
-    }
-  }
-
   public String getName() {
     return name;
   }

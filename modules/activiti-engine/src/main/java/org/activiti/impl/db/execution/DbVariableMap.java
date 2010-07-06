@@ -78,11 +78,6 @@ public class DbVariableMap extends VariableMap implements Serializable {
     }
   }
   
-  public void createVariable(String name, String type) {
-    VariableInstance variableInstance = createVariableInstance(name, type);
-    insertVariableInstance(variableInstance);
-  }
-
   public Map<String, Object> getVariables() {
     Map<String, Object> variables = new HashMap<String, Object>();
     for (String variableName: getVariableNames()) {
@@ -155,9 +150,4 @@ public class DbVariableMap extends VariableMap implements Serializable {
     return variableInstance;
   }
 
-  protected VariableInstance createVariableInstance(String name, String typeName) {
-    VariableInstance variableInstance = new VariableInstance(name, typeName);
-    addVariableInstance(variableInstance);
-    return variableInstance;
-  }
 }

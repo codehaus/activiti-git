@@ -54,15 +54,6 @@ public class VariableInstance implements Serializable, PersistentObject {
   public VariableInstance() {
   }
   
-  public VariableInstance(String name, String typeName) {
-    this.name = name;
-    this.typeName = typeName;
-    this.type = CommandContext
-      .getCurrent()
-      .getVariableTypes()
-      .getVariableType(typeName);
-  }
-
   public VariableInstance(String name, Object value) {
     this.name = name;
     this.type = CommandContext

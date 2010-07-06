@@ -396,10 +396,7 @@ public class ExecutionImpl implements
     setTransition(null);
     setActive(false);
 
-    // create scoped variables
-    for (VariableDeclarationImpl variableDeclaration: getActivity().getVariableDeclarations()) {
-      scopeExecution.createVariable(variableDeclaration.getName(), variableDeclaration.getType());
-    }
+    // TODO: declare scoped variables if needed
 
     // create scoped timers
     for (TimerDeclarationImpl timerDeclaration: getActivity().getTimerDeclarations()) {
@@ -517,13 +514,6 @@ public class ExecutionImpl implements
     return variableMap.getVariables();
   }
   
-  public void createVariable(String name, String type) {
-    if (variableMap==null) {
-      initializeVariableMap();
-    }
-    variableMap.createVariable(name, type);
-  }
-
   public void setVariables(Map<String, Object> variables) {
     if (variables!=null) {
       for (Map.Entry<String, Object> entry: variables.entrySet()) {

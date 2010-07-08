@@ -519,6 +519,9 @@ public class ExecutionImpl implements
   }
   
   public void setVariables(Map<String, Object> variables) {
+    if (variableMap==null) {
+      initializeVariableMap();
+    }
     if (variables!=null) {
       for (Map.Entry<String, Object> entry: variables.entrySet()) {
         setVariable(entry.getKey(), entry.getValue());

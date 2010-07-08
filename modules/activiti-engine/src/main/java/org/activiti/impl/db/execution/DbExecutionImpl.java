@@ -189,15 +189,6 @@ public class DbExecutionImpl extends ExecutionImpl implements PersistentObject {
     delete();
   }
 
-  @Override
-  public void setVariables(Map<String, Object> variables) {
-    if (processDefinition == null) {
-      // Any lazy loading triggered here
-      getProcessDefinition();
-    }
-    super.setVariables(variables);
-  }
-
   protected void delete() {
     PersistenceSession persistenceSession = CommandContext.getCurrent().getPersistenceSession();
 
@@ -237,6 +228,9 @@ public class DbExecutionImpl extends ExecutionImpl implements PersistentObject {
 
   @Override
   protected void initializeVariableMap() {
+    if (processDefinition == null) {
+      getProcessDefinition();
+    }
     this.variableMap = new DbVariableMap(this);
   }
 

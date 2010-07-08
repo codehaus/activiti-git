@@ -12,7 +12,6 @@
  */
 package org.activiti.impl.scripting;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.script.Bindings;
@@ -24,9 +23,6 @@ import javax.script.SimpleBindings;
 
 import org.activiti.ActivitiException;
 import org.activiti.impl.execution.ExecutionImpl;
-import org.activiti.impl.interceptor.CommandContext;
-
-import com.sun.script.juel.JuelScriptEngineFactory;
 
 
 /**
@@ -36,14 +32,14 @@ public class ScriptingEngines {
   
   public static final String DEFAULT_EXPRESSION_LANGUAGE =  "juel"; 
 
-  static ScriptingEngines defaultScriptingEngines = new ScriptingEngines(
-    new ScriptEngineFactory[]{
-      new JuelScriptEngineFactory()
-    }
-  );
-  ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+  private final ScriptEngineManager scriptEngineManager;
   
   public ScriptingEngines() {
+    this(new ScriptEngineManager());
+  }
+
+  public ScriptingEngines(ScriptEngineManager scriptEngineManager) {
+   this.scriptEngineManager = scriptEngineManager;
   }
 
   public ScriptingEngines addScriptEngineFactory(ScriptEngineFactory scriptEngineFactory) {
@@ -51,20 +47,6 @@ public class ScriptingEngines {
     return this;
   }
 
-
-  public ScriptingEngines(ScriptEngineFactory[] scriptEngineFactories) {
-    setScriptEngineFactories(Arrays.asList(scriptEngineFactories));
-  }
-
-  public static ScriptingEngines getScriptingEngines() {
-    CommandContext commandContext = CommandContext.getCurrent();
-    if (commandContext!=null) {
-      return commandContext
-        .getScriptingEngines();
-    }
-    return defaultScriptingEngines;
-  }
-  
   public void setScriptEngineFactories(List<ScriptEngineFactory> scriptEngineFactories) {
     if (scriptEngineFactories!=null) {
       for (ScriptEngineFactory scriptEngineFactory: scriptEngineFactories) {

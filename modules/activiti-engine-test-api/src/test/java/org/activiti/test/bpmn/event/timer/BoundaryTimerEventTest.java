@@ -17,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.activiti.Job;
 import org.activiti.JobQuery;
@@ -41,7 +40,8 @@ public class BoundaryTimerEventTest {
   public LogInitializer logSetup = new LogInitializer(ThreadRenderingMode.PRINT_ID);
   @Rule
   public ProcessDeployer deployer = new ProcessDeployer();
-
+  
+  
   /*
    * Test for when multiple boundary timer events are defined on the same user
    * task
@@ -53,7 +53,7 @@ public class BoundaryTimerEventTest {
   @ProcessDeclared
   public void testMultipleTimersOnUserTask() {
 
-    // Set the clock to time '0'
+    // Set the clock to time '0' before any processes are started
     Clock.setCurrentTime(new Date(0L));
 
     // After process start, there should be 3 timers created

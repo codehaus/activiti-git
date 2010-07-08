@@ -27,6 +27,7 @@ import org.activiti.impl.definition.VariableDeclarationImpl;
 import org.activiti.impl.interceptor.CommandContext;
 import org.activiti.impl.job.TimerImpl;
 import org.activiti.impl.timer.TimerDeclarationImpl;
+import org.activiti.impl.variable.VariableTypes;
 import org.activiti.pvm.Activity;
 import org.activiti.pvm.ActivityExecution;
 import org.activiti.pvm.ExecutionController;
@@ -109,6 +110,8 @@ public class ExecutionImpl implements
    * to store this boolean).
    */
   transient boolean ended = false;
+
+  private VariableTypes variableTypes;
   
   /* Default constructor for ibatis/jpa/etc. */
   protected ExecutionImpl() {
@@ -122,7 +125,7 @@ public class ExecutionImpl implements
   }
   
   /** constructor for new child executions (both nested scopes and concurrent executions) */
-  public ExecutionImpl(ExecutionImpl parent) {
+  protected ExecutionImpl(ExecutionImpl parent) {
     setProcessDefinition(parent.getProcessDefinition());
     setProcessInstance(parent.getProcessInstance());
     setActivity(parent.getActivity());
@@ -142,8 +145,9 @@ public class ExecutionImpl implements
     return processDefinition;
   }
 
-  public void setProcessDefinition(ProcessDefinitionImpl processDefinition) {
+  protected void setProcessDefinition(ProcessDefinitionImpl processDefinition) {
     this.processDefinition = processDefinition;
+    this.variableTypes = processDefinition.getVariableTypes();
   }
 
   public ActivityImpl getActivity() {
@@ -607,5 +611,9 @@ public class ExecutionImpl implements
   }
   public void setCachedElContext(Object cachedElContext) {
     this.cachedElContext = cachedElContext;
+  }
+
+  public VariableTypes getVariableTypes() {
+    return variableTypes;
   }
 }

@@ -60,10 +60,6 @@ public class VariableInstance implements Serializable, PersistentObject {
     setValue(value);
   }
 
-  public VariableInstance(String name, Object value) {
-    this(CommandContext.getCurrent().getVariableTypes().findVariableType(value), name, value);
-  }
-
   public void setExecution(DbExecutionImpl execution) {
     if (execution == null) {
       this.executionId = null;

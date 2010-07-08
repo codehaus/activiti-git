@@ -37,14 +37,12 @@ import org.activiti.impl.bpmn.UserTaskActivity;
 import org.activiti.impl.calendar.BusinessCalendar;
 import org.activiti.impl.calendar.BusinessCalendarManager;
 import org.activiti.impl.calendar.DurationBusinessCalendar;
-import org.activiti.impl.cmd.DeployCmd;
 import org.activiti.impl.definition.ActivityImpl;
 import org.activiti.impl.definition.FormReference;
 import org.activiti.impl.definition.ProcessDefinitionImpl;
 import org.activiti.impl.definition.ScopeElementImpl;
 import org.activiti.impl.definition.TransitionImpl;
 import org.activiti.impl.el.ExpressionManager;
-import org.activiti.impl.interceptor.CommandContext;
 import org.activiti.impl.job.TimerExecuteNestedActivityJobHandler;
 import org.activiti.impl.scripting.ExpressionCondition;
 import org.activiti.impl.scripting.ScriptingEngines;
@@ -75,7 +73,7 @@ public class BpmnParse extends Parse {
   /**
    * The end result of the parsing: a list of process definition.
    */
-  protected List<ProcessDefinitionImpl> processDefinitions = new ArrayList<ProcessDefinitionImpl>();
+  private final List<ProcessDefinitionImpl> processDefinitions = new ArrayList<ProcessDefinitionImpl>();
 
   /**
    * The class to instantiate during parsing where all the runtime data will be
@@ -91,7 +89,7 @@ public class BpmnParse extends Parse {
    * that this map doesn't need to be re-initialized for each new process
    * definition.
    */
-  protected Map<String, Element> itemDefinitions = new HashMap<String, Element>();
+  private final Map<String, Element> itemDefinitions = new HashMap<String, Element>();
 
   /**
    * Map containing the the {@link BpmnInterface}s defined in the XML file. The
@@ -100,7 +98,7 @@ public class BpmnParse extends Parse {
    * Interfaces are defined outside the process definition(s), which means that
    * this map doesn't need to be re-initialized for each new process definition.
    */
-  protected Map<String, BpmnInterface> bpmnInterfaces = new HashMap<String, BpmnInterface>();
+  private final Map<String, BpmnInterface> bpmnInterfaces = new HashMap<String, BpmnInterface>();
 
   /**
    * Map containing the {@link Operation}s defined in the XML file. The key is
@@ -109,13 +107,7 @@ public class BpmnParse extends Parse {
    * Operations are defined outside the process definition(s), which means that
    * this map doesn't need to be re-initialized for each new process definition.
    */
-  protected Map<String, Operation> operations = new HashMap<String, Operation>();
-
-  /**
-   * The current {@link CommandContext} that is used during the
-   * {@link DeployCmd} . Gives acces to process-engine configuration objects.
-   */
-  protected CommandContext commandContext;
+  private final Map<String, Operation> operations = new HashMap<String, Operation>();
 
   private final ExpressionManager expressionManager;
 
@@ -895,11 +887,6 @@ public class BpmnParse extends Parse {
 
   public BpmnParse processDefinitionClass(Class< ? extends ProcessDefinition> processDefinitionClass) {
     this.processDefinitionClass = processDefinitionClass;
-    return this;
-  }
-
-  public BpmnParse commandContext(CommandContext commandContext) {
-    this.commandContext = commandContext;
     return this;
   }
 

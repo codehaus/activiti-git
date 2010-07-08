@@ -24,7 +24,6 @@ import org.activiti.impl.persistence.PersistenceSession;
 import org.activiti.impl.timer.TimerSession;
 import org.activiti.impl.tx.Session;
 import org.activiti.impl.tx.TransactionContext;
-import org.activiti.impl.variable.VariableTypes;
 
 /**
  * @author Tom Baeyens
@@ -186,10 +185,6 @@ public class CommandContext {
 
   public TransactionContext getTransactionContext() {
     return transactionContext;
-  }
-
-  public VariableTypes getVariableTypes() {
-    return commandContextFactory.getProcessEngineConfiguration().getVariableTypes();
   }
 
 }

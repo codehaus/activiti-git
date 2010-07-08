@@ -49,13 +49,14 @@ import org.activiti.impl.tx.StandaloneTransactionContextFactory;
 import org.activiti.impl.tx.TransactionContextFactory;
 import org.activiti.impl.variable.ByteArrayType;
 import org.activiti.impl.variable.DateType;
+import org.activiti.impl.variable.VariableTypes;
 import org.activiti.impl.variable.IntegerType;
 import org.activiti.impl.variable.LongType;
 import org.activiti.impl.variable.NullType;
 import org.activiti.impl.variable.SerializableType;
 import org.activiti.impl.variable.ShortType;
 import org.activiti.impl.variable.StringType;
-import org.activiti.impl.variable.VariableTypes;
+import org.activiti.impl.variable.DefaultVariableTypes;
 
 /**
  * @author Tom Baeyens
@@ -202,8 +203,7 @@ public class ProcessEngineConfiguration {
   }
 
   protected VariableTypes createDefaultVariableTypes() {
-    return new VariableTypes().addType(new NullType()).addType(new StringType()).addType(new ShortType()).addType(new IntegerType()).addType(new LongType())
-            .addType(new DateType()).addType(new ByteArrayType()).addType(new SerializableType());
+    return new DefaultVariableTypes();
   }
 
   protected IdGenerator createDefaultIdGenerator(CommandExecutor commandExecutor) {
